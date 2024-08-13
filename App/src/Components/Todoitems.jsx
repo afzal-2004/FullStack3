@@ -20,7 +20,7 @@ export const Todoitems = () => {
   const SendDataForBackend = (id, e) => {
     if (update) {
       axios
-        .put(`${window.location.origin}/UpdateTodo/${id}`, {
+        .put(`http://localhost:3000/UpdateTodo/${id}`, {
           name: Name,
           email: Email,
           age: Age,
@@ -33,7 +33,7 @@ export const Todoitems = () => {
         });
     } else {
       axios
-        .post(`${window.location.origin}/CreatedTodo`, {
+        .post("http://localhost:3000/CreatedTodo", {
           name: Name,
           email: Email,
           age: Age,
@@ -54,7 +54,7 @@ export const Todoitems = () => {
   //  2.READ OPERATION FROM DATABASE
   useEffect(() => {
     axios
-      .get(`${window.location.origin}/getData`)
+      .get("http://localhost:3000/getData")
       .then((Response) => {
         console.log(Response.data);
         setData(Response.data);
@@ -70,7 +70,7 @@ export const Todoitems = () => {
     setmodel(true);
 
     axios
-      .get(`${window.location.origin}/users/${id}`)
+      .get(`http://localhost:3000/users/${id}`)
       .then((response) => {
         console.log("Data is ", response.data);
         setName(response.data.name);
@@ -84,7 +84,7 @@ export const Todoitems = () => {
   //   4. DELETE OPERATION ON DATABASE
   const HandelDeleteTodo = (id) => {
     axios
-      .delete(`${window.location.origin}/deleteTodo/` + id)
+      .delete("http://localhost:3000/deleteTodo/" + id)
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
   };
