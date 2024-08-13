@@ -6,7 +6,9 @@ import { TodoModel } from "./models/todos.module.js";
 const Port = process.env.PORT || 3000;
 const app = express();
 
-app.use(cors());
+app.use(
+  cors("https://todofrountend-ni1j03aal-afzals-projects-0e2bb592.vercel.app")
+);
 app.use(express.json());
 dotenv.config({
   path: "./.env",
