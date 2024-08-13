@@ -7,7 +7,13 @@ const Port = process.env.PORT || 3000;
 const app = express();
 
 app.use(
-  cors("https://todofrountend-ni1j03aal-afzals-projects-0e2bb592.vercel.app")
+  cors({
+    origin: [
+      "https://todofrountend-ni1j03aal-afzals-projects-0e2bb592.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
 );
 app.use(express.json());
 dotenv.config({
