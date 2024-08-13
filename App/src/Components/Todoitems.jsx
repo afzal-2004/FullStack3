@@ -109,7 +109,7 @@ export const Todoitems = () => {
                 <li>Action</li>
               </ul>
               <section>
-                <hr />
+                <hr className=" hidden sm:flex" />
 
                 <ul className=" flex justify-evenly sm:flex-row flex-col sm:text-[22px] font-semibold text-[15px]  items-center sm:p-1">
                   <li>{data.name}</li>
