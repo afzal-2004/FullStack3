@@ -8,9 +8,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: [
-      "https://todofrountend-ni1j03aal-afzals-projects-0e2bb592.vercel.app",
-    ],
+    origin: ["https://full-stack3-wa9r.vercel.app/"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
