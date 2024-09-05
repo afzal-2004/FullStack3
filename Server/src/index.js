@@ -6,7 +6,15 @@ import { TodoModel } from "./models/todos.module.js";
 const Port = process.env.PORT || 3000;
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://todofrountend-ni1j03aal-afzals-projects-0e2bb592.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 dotenv.config({
   path: "./.env",
@@ -23,11 +31,40 @@ app.get("/getData", function (req, res) {
     });
 });
 
+app.get("/users/:id", async (req, res) => {
+  const id = req.params.id;
+  TodoModel.findById({ _id: id })
+    .then(function (todos) {
+      res.json(todos);
+      console.log("Todo Data is ", todos);
+    })
+    .catch(function (err) {
+      res.json(err);
+    });
+});
+
 app.post("/CreatedTodo", async (res, req) => {
   const data = res.body;
   const newdata = new TodoModel(data);
   await newdata.save();
   console.log(data);
+});
+
+app.delete("/deleteTodo/:id", async (req, res) => {
+  const id = req.params.id;
+  TodoModel.findByIdAndDelete({ _id: id })
+    .then((res) => res.json(res))
+    .catch((err) => res.json(err));
+});
+
+app.put("/UpdateTodo/:id", (req, res) => {
+  const id = req.params.id;
+  TodoModel.findByIdAndUpdate(
+    { _id: id },
+    { name: req.body.name, email: req.body.email, age: req.body.age }
+  )
+    .then((res) => res.json(res))
+    .catch((err) => res.json(err));
 });
 app.get("/", function (req, res) {
   res.send("Hello World");

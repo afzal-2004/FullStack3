@@ -4,18 +4,54 @@ import { IoAdd } from "react-icons/io5";
 import axios from "axios";
 import { useState, useEffect } from "react";
 export const Todoitems = () => {
+  const [update, setupdate] = useState(false);
   const [Data, setData] = useState([]);
   const [model, setmodel] = useState(false);
   const [Name, setName] = useState("");
   const [Email, setEmail] = useState("");
-  const [Age, setAge] = useState(null);
+  const [Age, setAge] = useState(0);
+  const [currentid, setcurrentid] = useState(null);
 
   const OpenModel = () => {
     setmodel(true);
   };
 
-  //   USING THIS TO DO I WANT TO  PERFROM CRUD OPERATION ON DATABASE USIG MERN STACK
-  //  1.READ OPERATION FROM DATABASE
+  //1. CREATE OPERATION ON DATABASE
+  const SendDataForBackend = (id, e) => {
+    if (update) {
+      axios
+        .put(`http://localhost:3000/UpdateTodo/${id}`, {
+          name: Name,
+          email: Email,
+          age: Age,
+        })
+        .then((Response) => {
+          console.log(Response);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      axios
+        .post("http://localhost:3000/CreatedTodo", {
+          name: Name,
+          email: Email,
+          age: Age,
+        })
+        .then((Responce) => {
+          console.log(Responce);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    setName("");
+    setAge("");
+    setEmail("");
+  };
+
+  //  2.READ OPERATION FROM DATABASE
   useEffect(() => {
     axios
       .get("http://localhost:3000/getData")
@@ -27,26 +63,30 @@ export const Todoitems = () => {
         console.log(err);
       });
   }, []);
-  // CREATE OPERATION ON DATABASE
-  const SendDataForBackend = (e) => {
+
+  //  3. UPDATE OPERATION IN DATABASE
+  const HandelUpdateTodo = (id) => {
+    setupdate(true);
+    setmodel(true);
+
     axios
-      .post("http://localhost:3000/CreatedTodo", {
-        name: Name,
-        email: Email,
-        age: Age,
+      .get(`http://localhost:3000/users/${id}`)
+      .then((response) => {
+        console.log("Data is ", response.data);
+        setName(response.data.name);
+        setEmail(response.data.email);
+        setAge(response.data.age);
+        setcurrentid(response.data._id);
       })
-      .then((Responce) => {
-        console.log(Responce);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    setName("");
-    setAge("");
-    setEmail("");
+      .catch((err) => console.log(err));
   };
-  const DeleteOperation = (e) => {
-    console.log("Try To Ddelete AnyItem");
+
+  //   4. DELETE OPERATION ON DATABASE
+  const HandelDeleteTodo = (id) => {
+    axios
+      .delete("http://localhost:3000/deleteTodo/" + id)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -58,9 +98,47 @@ export const Todoitems = () => {
         <IoAdd /> Add New Item
       </button>
 
-      {Data.map((data, i) => (
-        <div key={i}>
-          <TodoItem data={data} />
+      {Data.map((data, _id) => (
+        <div key={_id}>
+          <div className=" bg-white min-w-full p-2  rounded-xl  m-2 sm:m-3">
+            <div className="flex sm:flex-col flex-row justify-between">
+              <ul className=" flex justify-evenly sm:flex-row flex-col sm:text-[22px] font-semibold text-[15px]">
+                <li>Name</li>
+                <li>Email</li>
+                <li>Age</li>
+                <li>Action</li>
+              </ul>
+              <section>
+                <hr className=" hidden sm:flex" />
+
+                <ul className=" flex justify-evenly sm:flex-row flex-col sm:text-[22px] font-semibold text-[15px]  items-center sm:p-1">
+                  <li>{data.name}</li>
+                  <li>{data.email}</li>
+                  <li>{data.age}</li>
+                  <li>
+                    <button
+                      className="bg-green-300 sm:p-1 rounded-md   p-1 m-1"
+                      onClick={() => {
+                        setcurrentid(data._id);
+                        HandelUpdateTodo(data._id);
+                      }}
+                    >
+                      Update
+                    </button>
+                    <button
+                      className="bg-red-500 sm:p-1 p-1 rounded-md "
+                      onClick={() => {
+                        HandelDeleteTodo(data._id);
+                        setupdate(false);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </li>
+                </ul>
+              </section>
+            </div>
+          </div>
         </div>
       ))}
 
@@ -75,6 +153,7 @@ export const Todoitems = () => {
                 <label htmlFor="Name">Name :</label>
                 <input
                   type="text"
+                  value={Name}
                   placeholder=" You Name"
                   onChange={(e) => {
                     setName(e.target.value);
@@ -88,6 +167,7 @@ export const Todoitems = () => {
                 <label htmlFor="Email">Email :</label>
                 <input
                   type="text"
+                  value={Email}
                   placeholder="xyz@gmail.com"
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -98,6 +178,7 @@ export const Todoitems = () => {
                 <label htmlFor="Age">Age :</label>
                 <input
                   type="number"
+                  value={Age}
                   placeholder="Ex.18"
                   onChange={(e) => {
                     setAge(e.target.value);
@@ -109,49 +190,17 @@ export const Todoitems = () => {
                 type="submit"
                 className="bg-green-200 px-3 py-2 rounded-md flex  items-center"
                 onClick={() => {
-                  SendDataForBackend();
+                  SendDataForBackend(currentid);
                   setmodel(false);
                 }}
               >
                 <IoAdd />
-                Add
+                {update ? "Update" : "Add"}
               </button>
             </div>
           </div>
         </div>
       )}
-    </>
-  );
-};
-
-const TodoItem = ({ data }) => {
-  return (
-    <>
-      <main className=" bg-white min-w-full p-2  rounded-xl  m-2 sm:m-3">
-        <div className="flex sm:flex-col flex-row justify-between">
-          <ul className=" flex justify-evenly sm:flex-row flex-col sm:text-[22px] font-semibold text-[15px]">
-            <li>Name</li>
-            <li>Email</li>
-            <li>Age</li>
-            <li>Action</li>
-          </ul>
-          <section>
-            <ul className=" flex justify-evenly sm:flex-row flex-col sm:text-[22px] font-semibold text-[15px]  items-center sm:p-3">
-              <li>{data.name}</li>
-              <li>{data.email}</li>
-              <li>{data.age}</li>
-              <li>
-                <button className="bg-green-300 sm:p-2 rounded-md   p-1 m-1">
-                  Update
-                </button>
-                <button className="bg-red-500 sm:p-2 p-1 rounded-md ">
-                  Delete
-                </button>
-              </li>
-            </ul>
-          </section>
-        </div>
-      </main>
     </>
   );
 };
