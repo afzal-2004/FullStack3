@@ -47,10 +47,7 @@ app.post("/CreatedTodo", async (req, res) => {
     const newdata = new TodoModel(data);
     await newdata.save();
 
-    return res.status(201).json({
-      success: true,
-      message: "okk",
-    });
+    console.log(newdata);
   } catch (error) {
     return res.status(401).json({
       error: "Something Went Wrong",
