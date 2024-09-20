@@ -42,7 +42,7 @@ export const Todoitems = () => {
           age: Age,
         })
         .then((Responce) => {
-          console.log(" Backend Responce", Responce);
+          console.log(Responce);
           toast.success("Contact  Addded Succesfully");
         })
         .catch((err) => {
