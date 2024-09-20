@@ -3,6 +3,7 @@
 import { IoAdd } from "react-icons/io5";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 export const Todoitems = () => {
   const [update, setupdate] = useState(false);
   const [Data, setData] = useState([]);
@@ -11,7 +12,7 @@ export const Todoitems = () => {
   const [Email, setEmail] = useState("");
   const [Age, setAge] = useState(0);
   const [currentid, setcurrentid] = useState(null);
-
+  let BackendUrl = "http://localhost:3000";
   const OpenModel = () => {
     setmodel(true);
   };
@@ -20,29 +21,33 @@ export const Todoitems = () => {
   const SendDataForBackend = (id, e) => {
     if (update) {
       axios
-        .put(`http://localhost:3000/UpdateTodo/${id}`, {
+        .put(`${BackendUrl}/UpdateTodo/${id}`, {
           name: Name,
           email: Email,
           age: Age,
         })
         .then((Response) => {
           console.log(Response);
+          toast.success("Contact  Updated Succesfully");
         })
         .catch((err) => {
           console.log(err);
+          toast.error("SomeThing Went Wrong");
         });
     } else {
       axios
-        .post("http://localhost:3000/CreatedTodo", {
+        .post(`${BackendUrl}/CreatedTodo`, {
           name: Name,
           email: Email,
           age: Age,
         })
         .then((Responce) => {
           console.log(Responce);
+          toast.success("Contact  Added Succesfully");
         })
         .catch((err) => {
           console.log(err);
+          toast.error("SomeThing Went Wrong");
         });
     }
 
@@ -54,7 +59,7 @@ export const Todoitems = () => {
   //  2.READ OPERATION FROM DATABASE
   useEffect(() => {
     axios
-      .get("http://localhost:3000/getData")
+      .get(`${BackendUrl}/getData`)
       .then((Response) => {
         console.log(Response.data);
         setData(Response.data);
@@ -70,7 +75,7 @@ export const Todoitems = () => {
     setmodel(true);
 
     axios
-      .get(`http://localhost:3000/users/${id}`)
+      .get(`${BackendUrl}/users/${id}`)
       .then((response) => {
         console.log("Data is ", response.data);
         setName(response.data.name);
@@ -84,9 +89,15 @@ export const Todoitems = () => {
   //   4. DELETE OPERATION ON DATABASE
   const HandelDeleteTodo = (id) => {
     axios
-      .delete("http://localhost:3000/deleteTodo/" + id)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      .delete(`${BackendUrl}/deleteTodo/` + id)
+      .then((res) => {
+        console.log(res);
+        toast.success("Contact  deleted");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("SomeThing Went Wrong");
+      });
   };
 
   return (
