@@ -41,11 +41,22 @@ app.get("/users/:id", async (req, res) => {
     });
 });
 
-app.post("/CreatedTodo", async (res, req) => {
-  const data = res.body;
-  const newdata = new TodoModel(data);
-  await newdata.save();
-  console.log(data);
+app.post("/CreatedTodo", async (req, res) => {
+  try {
+    const data = req.body;
+    const newdata = new TodoModel(data);
+    await newdata.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "okk",
+    });
+  } catch (error) {
+    return res.status(401).json({
+      error: "Something Went Wrong",
+      details: error,
+    });
+  }
 });
 
 app.delete("/deleteTodo/:id", async (req, res) => {
